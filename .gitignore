@@ -1,0 +1,5 @@
+# ignore the executable
+consoleGames
+
+# ignore all .o files
+*.o
