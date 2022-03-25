@@ -7,9 +7,10 @@ int main() {
     Game* gamePtr;
     // gamePtr = new DummyGame;
     gamePtr = new Wordle;
-    while (gamePtr->getControlState()) {
-        gamePtr->display();
+    while (gamePtr->getControlState() == 1) {
+        gamePtr->takeInput();
         gamePtr->update();
+        gamePtr->display();
     }
     return 0;
 }
