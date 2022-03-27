@@ -6,13 +6,13 @@
 class DummyGame: public Game {
     public:
         DummyGame();
-        DummyGame(int initGameState);
-        void display();
-        void takeInput();
-        void update();
-        int getControlState();
+        DummyGame(int init_game_state);
+        void Display();
+        void TakeInput();
+        void Update();
+        int GetControlState();
     private:
-        int gameState;
+        int game_state_;
 };
 
 #endif

@@ -2,25 +2,25 @@
 #include "dummyGame.h"
 
 DummyGame::DummyGame() {
-    gameState = 0;
+    game_state_ = 0;
 }
 
-DummyGame::DummyGame(int initGameState) {
-    gameState = initGameState;
+DummyGame::DummyGame(int init_game_state) {
+    game_state_ = init_game_state;
 }
 
-void DummyGame::display() {
-    std::cout << gameState << std::endl;
+void DummyGame::Display() {
+    std::cout << game_state_ << std::endl;
 }
 
-void DummyGame::takeInput() {}
+void DummyGame::TakeInput() {}
 
-void DummyGame::update() {
-    gameState ++;
+void DummyGame::Update() {
+    game_state_ ++;
 }
 
-int DummyGame::getControlState() {
-    if (gameState == 10) {
+int DummyGame::GetControlState() {
+    if (game_state_ == 10) {
         return 0;
     }
     else {

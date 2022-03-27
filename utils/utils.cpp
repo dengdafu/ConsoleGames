@@ -2,7 +2,7 @@
 
 using namespace std;
 
-map<char, int> utils::charCount(const string &s) {
+map<char, int> utils::CharCount(const string &s) {
     map<char, int> counter;
     for(const char& c : s) {
         if (counter.find(c) != counter.end()) {

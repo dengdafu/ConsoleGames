@@ -3,20 +3,20 @@
 
 class Game {
     public:
-        // display() displays the current game state to console
-        virtual void display() = 0;
+        // Display() displays the current game state to console
+        virtual void Display() = 0;
 
-        // takeInput() takes in user inputs
-        virtual void takeInput() = 0;
+        // TakeInput() takes in user inputs
+        virtual void TakeInput() = 0;
 
-        // update() updates the game state
-        virtual void update() = 0;
+        // Update() updates the game state
+        virtual void Update() = 0;
 
-        // getControlState() returns the control state of the game.
+        // GetControlState() returns the control state of the game.
         // 0: end
         // 1: ongoing
         // 2: pending
-        virtual int getControlState() = 0;
+        virtual int GetControlState() = 0;
 };
 
 #endif

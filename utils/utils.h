@@ -7,7 +7,7 @@
 using namespace std;
 
 namespace utils {
-    map<char, int> charCount(const string& s);
+    map<char, int> CharCount(const string& s);
 }
 
 #endif
