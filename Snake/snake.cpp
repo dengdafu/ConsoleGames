@@ -20,22 +20,26 @@
 // Message line 2                                                                     20x82
 constexpr int kHeight = 20;
 constexpr int kWidth = 82;
+constexpr int kUpperBound = 0;
+constexpr int kLowerBound = 16;
+constexpr int kLeftBound = 0;
+constexpr int kRightBound = 81;
 constexpr const char* kBoundaryRow = "**********************************************************************************";
 constexpr const char* kRegularRow = "*                                                                                *";
 constexpr const char* kEmptyRow = "                                                                                  ";
 
 #include <string>
 #include <iostream>
-#include "snake.h"
-#include <curses.h>
 #include <utility>
+#include <curses.h>
+#include "snake.h"
 
 using namespace std;
 
 Snake::Snake() {
     srand(time(NULL));
     initscr();
-    timeout(100);
+    timeout(10);
     resizeterm(kHeight, kWidth); 
     // Some terminals do not support hiding cursor, thus the following workaround
     is_cursor_hideable_ = !(curs_set(0) == ERR);
@@ -58,7 +62,8 @@ void Snake::Display() {
 }
 
 void Snake::TakeInput() {
-    switch(getch()){
+    char input = getch();
+    switch(input) {
         case 'q':
             control_state_ = kEnd;
             break;
@@ -68,13 +73,18 @@ void Snake::TakeInput() {
                 InitializeCanvas();
             }
             break;
+        case 'w': case 'a': case 's': case 'd':
+            ChangeDirection(input);
+            break;
         default:
             break;
     }
 }
 
 void Snake::Update() {
-
+    if (control_state_ == kOngoing) {
+        SnakeMove();
+    }
 }
 
 int Snake::GetControlState() {
@@ -85,27 +95,28 @@ void Snake::InitializeGameState() {
     GenerateHead();
     GenerateFood();
     game_state_.score = 0;
+    game_state_.direction = kDirectionMap.at('w');
 }
 
 
 void Snake::InitializeCanvas() {
     // draw all rows
-    mvprintw(0, 0, kBoundaryRow);
-    for (int i = 1; i < kHeight - 4; i++) {
+    mvprintw(kUpperBound, 0, kBoundaryRow);
+    for (int i = 1; i < kLowerBound; i++) {
         mvprintw(i, 0, kRegularRow);
     }
-    mvprintw(kHeight - 4, 0, kBoundaryRow);
-    for (int i = kHeight - 3; i < kHeight; i++) {
+    mvprintw(kLowerBound, 0, kBoundaryRow);
+    for (int i = kLowerBound + 1; i < kHeight; i++) {
         mvprintw(i, 0, kEmptyRow);
     }
     
     // display initial message
-    mvprintw(kHeight - 2, 0, "Press 'wasd' to start.");
-    mvprintw(kHeight - 1, 0, "Press 'r' to regenerate.");
+    mvprintw(kLowerBound + 2, 0, "Press 'wasd' to start.");
+    mvprintw(kLowerBound + 3, 0, "Press 'r' to regenerate.");
 
     // display initial score
-    mvprintw(kHeight - 2, kWidth - 12, "SCORE: ");
-    mvprintw(kHeight - 2, kWidth - 5, to_string(game_state_.score).c_str());
+    mvprintw(kLowerBound + 2, kWidth - 12, "SCORE: ");
+    mvprintw(kLowerBound + 2, kWidth - 5, to_string(game_state_.score).c_str());
 
     // display head and food
     mvaddch(game_state_.head.first, game_state_.head.second, '@');
@@ -113,15 +124,67 @@ void Snake::InitializeCanvas() {
 }
 
 void Snake::GenerateHead() {
-    game_state_.head.first = 1 + rand() % (kHeight - 5);
-    game_state_.head.second = 1 + rand() % (kWidth - 2);
+    game_state_.head.first = 1 + rand() % (kLowerBound - kUpperBound - 1);
+    game_state_.head.second = 1 + rand() % (kRightBound - kLeftBound - 1);
 }
 
 void Snake::GenerateFood() {
-    game_state_.food.first = 1 + rand() % (kHeight - 5);
-    game_state_.food.second = 1 + rand() % (kWidth - 2);
+    game_state_.food.first = 1 + rand() % (kLowerBound - kUpperBound - 1);
+    game_state_.food.second = 1 + rand() % (kRightBound - kLeftBound - 1);
     while (game_state_.food == game_state_.head) {
-        game_state_.food.first = 1 + rand() % (kHeight - 5);
-        game_state_.food.second = 1 + rand() % (kWidth - 2);
+        game_state_.food.first = 1 + rand() % (kLowerBound - kUpperBound - 1);
+        game_state_.food.second = 1 + rand() % (kRightBound - kLeftBound - 1);
     }    
+}
+
+void Snake::ChangeDirection(char dir) {
+    int num_dir = kDirectionMap.at(dir);
+    if (control_state_ == kPaused) {
+        control_state_ = kOngoing;
+        game_state_.direction = num_dir;
+    }
+    else if (game_state_.direction != -num_dir) {
+        game_state_.direction = num_dir;
+    }
+}
+
+void Snake::SnakeMove() {
+    // TODO: add body movement logic
+    if (game_state_.direction == kDirectionMap.at('w')) {
+        if (game_state_.head.first == kUpperBound + 1) {
+            mvaddch(game_state_.head.first, game_state_.head.second, '@');
+            control_state_ = kEnd;
+            return;
+        }
+        mvaddch(game_state_.head.first--, game_state_.head.second, ' ');
+        mvaddch(game_state_.head.first, game_state_.head.second, '^');
+    }
+    else if (game_state_.direction == kDirectionMap.at('s')) {
+        cout << "direction is now down" << endl;
+        if (game_state_.head.first == kLowerBound - 1) {
+            mvaddch(game_state_.head.first, game_state_.head.second, '@');
+            control_state_ = kEnd;
+            return;
+        }
+        mvaddch(game_state_.head.first++, game_state_.head.second, ' ');
+        mvaddch(game_state_.head.first, game_state_.head.second, 'v');
+    }
+    else if (game_state_.direction == kDirectionMap.at('a')) {
+        if (game_state_.head.second == kLeftBound + 1) {
+            mvaddch(game_state_.head.first, game_state_.head.second, '@');
+            control_state_ = kEnd;
+            return;
+        }
+        mvaddch(game_state_.head.first, game_state_.head.second--, ' ');
+        mvaddch(game_state_.head.first, game_state_.head.second, '<');
+    }
+    else {
+        if (game_state_.head.second == kRightBound - 1) {
+            mvaddch(game_state_.head.first, game_state_.head.second, '@');
+            control_state_ = kEnd;
+            return;
+        }
+        mvaddch(game_state_.head.first, game_state_.head.second++, ' ');
+        mvaddch(game_state_.head.first, game_state_.head.second, '>');
+    }
 }

@@ -2,6 +2,7 @@
 #define SNAKE_H
 
 #include <list>
+#include <map>
 #include <ncurses.h>
 #include "../game.h"
 
@@ -16,11 +17,13 @@ class Snake: public Game {
         void Update();
         int GetControlState();
     private:
+        const map<char, int> kDirectionMap = {{'w', -1}, {'s', 1}, {'a', -2}, {'d', 2}};
         struct GameState {
             pair<int, int> head;
             list<pair<int, int>> body;
             pair<int, int> food;
             int score;
+            int direction;
         };
         WINDOW* canvas_ptr;
         int control_state_;
@@ -29,9 +32,10 @@ class Snake: public Game {
 
         void InitializeCanvas();
         void InitializeGameState();
-
         void GenerateHead();
         void GenerateFood();
+        void ChangeDirection(char dir);
+        void SnakeMove();
 };
 
 #endif
