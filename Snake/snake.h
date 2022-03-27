@@ -1,8 +1,11 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
+#include <list>
 #include <ncurses.h>
 #include "../game.h"
+
+using namespace std;
 
 class Snake: public Game {
     public:
@@ -13,10 +16,22 @@ class Snake: public Game {
         void Update();
         int GetControlState();
     private:
-        WINDOW* main_win_ptr_;
-        WINDOW* info_win_ptr_;
+        struct GameState {
+            pair<int, int> head;
+            list<pair<int, int>> body;
+            pair<int, int> food;
+            int score;
+        };
+        WINDOW* canvas_ptr;
         int control_state_;
-        void InitializeWindows();
+        GameState game_state_;
+        bool is_cursor_hideable_;
+
+        void InitializeCanvas();
+        void InitializeGameState();
+
+        void GenerateHead();
+        void GenerateFood();
 };
 
 #endif

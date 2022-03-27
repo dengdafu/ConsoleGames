@@ -1,9 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define END 0
-#define ONGOING 1
-#define PAUSED 2
+constexpr int kEnd = 0;
+constexpr int kOngoing = 1;
+constexpr int kPaused = 2;
 
 class Game {
     public:
