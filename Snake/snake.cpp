@@ -39,13 +39,13 @@ using namespace std;
 Snake::Snake() {
     srand(time(NULL));
     initscr();
-    timeout(10);
-    resizeterm(kHeight, kWidth); 
-    // Some terminals do not support hiding cursor, thus the following workaround
-    is_cursor_hideable_ = !(curs_set(0) == ERR);
+    noecho();
+    curs_set(false);
+    timeout(100);
+    resizeterm(kHeight, kWidth);
     InitializeGameState();
     InitializeCanvas();
-    control_state_ = kPaused;
+    control_state_ = kPaused;    
 }
 
 Snake::~Snake() {
@@ -53,11 +53,6 @@ Snake::~Snake() {
 }
 
 void Snake::Display() {
-    // move(kMainWinHeight-1, 0);
-    if (!is_cursor_hideable_) {
-        mvaddch(kHeight-3, 0, ' ');
-        move(kHeight-3, 0);
-    }
     refresh();
 }
 
@@ -160,7 +155,6 @@ void Snake::SnakeMove() {
         mvaddch(game_state_.head.first, game_state_.head.second, '^');
     }
     else if (game_state_.direction == kDirectionMap.at('s')) {
-        cout << "direction is now down" << endl;
         if (game_state_.head.first == kLowerBound - 1) {
             mvaddch(game_state_.head.first, game_state_.head.second, '@');
             control_state_ = kEnd;

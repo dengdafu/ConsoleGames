@@ -28,7 +28,6 @@ class Snake: public Game {
         WINDOW* canvas_ptr;
         int control_state_;
         GameState game_state_;
-        bool is_cursor_hideable_;
 
         void InitializeCanvas();
         void InitializeGameState();
