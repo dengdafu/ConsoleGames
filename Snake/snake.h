@@ -24,8 +24,9 @@ class Snake: public Game {
             pair<int, int> food;
             int score;
             int direction;
+            int special_food_countdown;
+            int pace;
         };
-        WINDOW* canvas_ptr;
         int control_state_;
         GameState game_state_;
 
@@ -33,8 +34,15 @@ class Snake: public Game {
         void InitializeGameState();
         void GenerateHead();
         void GenerateFood();
-        void ChangeDirection(char dir);
-        void SnakeMove();
+        // if changing direction is successful return true, else false.
+        bool ChangeDirection(char dir);
+        // if eat food return true, else false.
+        bool SnakeMove();
+        void UpdateScore();
+        void UpdatePace();
+        void ChangeToOngoingState();
+        void ChangeToPausedState();
+        void ChangeToOverState();
 };
 
 #endif

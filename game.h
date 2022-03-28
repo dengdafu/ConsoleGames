@@ -4,6 +4,7 @@
 constexpr int kEnd = 0;
 constexpr int kOngoing = 1;
 constexpr int kPaused = 2;
+constexpr int kOver = 3;
 
 class Game {
     public:
